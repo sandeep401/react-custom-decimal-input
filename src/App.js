@@ -15,8 +15,8 @@ export default function App() {
       <CustomDecimalInput
         value={decimalValue}
         onChange={handleDecimalChange}
-        step="0.01"
         placeholder="0.00"
+        step="0.01"
       />
     </div>
   );

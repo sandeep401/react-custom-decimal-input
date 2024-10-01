@@ -1,3 +1,5 @@
+
+
 import React, { useRef, useEffect, useState } from 'react';
 
 const CustomDecimalInput = ({
@@ -8,21 +10,6 @@ const CustomDecimalInput = ({
 }) => {
   const inputRef = useRef(null);
   const [cursorPosition, setCursorPosition] = useState(null); // Track the cursor position
-
-  // Parse the step into integer and decimal parts
-  const parseStep = () => {
-    const [stepInteger, stepDecimal] = step.split('.').map(Number);
-    console.log(stepInteger, stepDecimal);
-    return {
-      integerStep: stepInteger || 0,
-      decimalStep: stepDecimal || 0,
-      decimalPlaces: (step.split('.')[1] || '').length, // Count of decimal places in the step
-    };
-  };
-
-  console.log(parseStep());
-
-  const { integerStep, decimalStep, decimalPlaces } = parseStep();
 
   // Function to determine if the cursor is on the left (integer part) or right (decimal part) side
   const isCursorOnLeftSide = () => {
@@ -40,25 +27,23 @@ const CustomDecimalInput = ({
     const currentCursorPos = inputRef.current.selectionStart; // Capture cursor position
 
     if (value === '' || isNaN(value)) {
-      onChange(
-        `${integerStep}.${decimalStep.toString().padStart(decimalPlaces, '0')}`
-      );
+      onChange('1.01');
     } else {
       let [integerPart, decimalPart] = value.split('.').map(Number);
       if (isCursorOnLeftSide()) {
-        // Increment integer part by integer step
-        integerPart += integerStep;
+        // Increment integer part
+        integerPart += 1;
       } else {
-        // Increment decimal part by decimal step
-        decimalPart += decimalStep;
-        if (decimalPart >= Math.pow(10, decimalPlaces)) {
-          decimalPart = decimalPart % Math.pow(10, decimalPlaces); // Roll over the decimal part
-          integerPart += integerStep; // Increment the integer part
+        // Increment decimal part
+        // decimalPart = (decimalPart + 1) % 100;
+
+        decimalPart += 1;
+        if (decimalPart >= 100) {
+          decimalPart = 0; // Roll over the decimal part
+          integerPart += 1; // Increment the integer part
         }
       }
-      const formattedDecimalPart = decimalPart
-        .toString()
-        .padStart(decimalPlaces, '0');
+      const formattedDecimalPart = decimalPart.toString().padStart(2, '0');
       onChange(`${integerPart}.${formattedDecimalPart}`);
     }
 
@@ -70,25 +55,22 @@ const CustomDecimalInput = ({
     const currentCursorPos = inputRef.current.selectionStart; // Capture cursor position
 
     if (value === '' || isNaN(value)) {
-      onChange(
-        `-${integerStep}.${decimalStep.toString().padStart(decimalPlaces, '0')}`
-      );
+      onChange('-1.01');
     } else {
       let [integerPart, decimalPart] = value.split('.').map(Number);
       if (isCursorOnLeftSide()) {
-        // Decrement integer part by integer step
-        integerPart -= integerStep;
+        // Decrement integer part
+        integerPart -= 1;
       } else {
-        // Decrement decimal part by decimal step
-        decimalPart -= decimalStep;
-        if (decimalPart < 0) {
-          decimalPart = Math.pow(10, decimalPlaces) + decimalPart; // Roll over the decimal part
-          integerPart -= integerStep; // Decrement the integer part
+        // Decrement decimal part
+        if (decimalPart === 0) {
+          decimalPart = 99;
+          integerPart -= 1;
+        } else {
+          decimalPart -= 1;
         }
       }
-      const formattedDecimalPart = decimalPart
-        .toString()
-        .padStart(decimalPlaces, '0');
+      const formattedDecimalPart = decimalPart.toString().padStart(2, '0');
       onChange(`${integerPart}.${formattedDecimalPart}`);
     }
 
@@ -155,4 +137,4 @@ const CustomDecimalInput = ({
   );
 };
 
-export default CustomDecimalInput;
+export default CustomDecimalInput
